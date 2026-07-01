@@ -1,0 +1,68 @@
+project_name: arrebyalejandro
+environment: prod
+aws_region: us-east-1
+
+domain: arrebyalejandroprueba.esanocheterminodedia.com
+hosted_zone_name: esanocheterminodedia.com
+
+certificates:
+  alb_certificate_arn: "arn:aws:acm:us-east-1:960624215608:certificate/dc6c6762-ad98-4763-a149-147488078586"
+  cloudfront_certificate_arn: "arn:aws:acm:us-east-1:960624215608:certificate/dc6c6762-ad98-4763-a149-147488078586"
+
+# Networking
+networking:
+  vpc_cidr: "10.60.0.0/20"
+
+  availability_zones:
+    - us-east-1a
+    - us-east-1b
+
+  public_subnets:
+    - "10.60.0.0/24"
+    - "10.60.1.0/24"
+
+  private_subnets:
+    - "10.60.2.0/24"
+    - "10.60.3.0/24"
+
+  database_subnets:
+    - "10.60.4.0/24"
+    - "10.60.5.0/24"
+
+  enable_nat_gateway: true
+  single_nat_gateway: true
+
+
+# Compute
+compute:
+  instance_type: t3.micro
+  min_size: 1
+  max_size: 1
+  desired_capacity: 1
+
+# Database
+database:
+  name: wordpress_db
+  username: wordpress_admin
+  instance_class: db.t4g.medium
+
+# ⚡ Cache
+elasticache:
+  node_type: cache.t4g.micro
+  num_cache_nodes: 1
+
+# Storage
+s3:
+  force_destroy: false
+  versioning: true
+
+efs:
+  mount_point: /mnt/efs
+
+# Tags globales
+tags:
+  Project: arrebyalejandro
+  Environment: prod
+  Owner: stoyco
+  ManagedBy: terragrunt
+  Service: wordpress

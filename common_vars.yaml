@@ -1,68 +1,72 @@
-project_name: arrebyalejandro
-environment: prod
+project_name: ibarra-magento
+environment: dev
 aws_region: us-east-1
 
-domain: arrebyalejandroprueba.esanocheterminodedia.com
-hosted_zone_name: esanocheterminodedia.com
+domain: dev.tienda.com
+hosted_zone_name: tienda.com
 
 certificates:
-  alb_certificate_arn: "arn:aws:acm:us-east-1:960624215608:certificate/dc6c6762-ad98-4763-a149-147488078586"
-  cloudfront_certificate_arn: "arn:aws:acm:us-east-1:960624215608:certificate/dc6c6762-ad98-4763-a149-147488078586"
+  alb_certificate_arn: "REEMPLAZAR_ACM_ALB_ARN"
 
-# Networking
 networking:
-  vpc_cidr: "10.60.0.0/20"
-
+  vpc_cidr: "10.10.0.0/16"
   availability_zones:
     - us-east-1a
-    - us-east-1b
-
   public_subnets:
-    - "10.60.0.0/24"
-    - "10.60.1.0/24"
-
+    - "10.10.1.0/24"
   private_subnets:
-    - "10.60.2.0/24"
-    - "10.60.3.0/24"
-
+    - "10.10.11.0/24"
   database_subnets:
-    - "10.60.4.0/24"
-    - "10.60.5.0/24"
-
+    - "10.10.21.0/24"
   enable_nat_gateway: true
   single_nat_gateway: true
 
+security:
+  allowed_admin_cidrs:
+    - "REEMPLAZAR_TU_IP_PUBLICA/32"
 
-# Compute
 compute:
-  instance_type: t3.micro
+  name: ec2-ibarra-magento-dev
+  ami_id: "REEMPLAZAR_AMI_ID"
+  instance_type: t3.large
   min_size: 1
   max_size: 1
   desired_capacity: 1
+  root_volume_size: 50
+  root_volume_type: gp3
 
-# Database
-database:
-  name: wordpress_db
-  username: wordpress_admin
-  instance_class: db.t4g.medium
+rds:
+  identifier: rds-ibarra-magento-dev
+  database_name: magento_dev
+  username: magento_admin
 
-# ⚡ Cache
-elasticache:
-  node_type: cache.t4g.micro
-  num_cache_nodes: 1
-
-# Storage
 s3:
-  force_destroy: false
+  media_bucket_name: s3-ibarra-magento-dev-media
+  force_destroy: true
   versioning: true
 
-efs:
-  mount_point: /mnt/efs
+opensearch:
+  domain_name: os-ibarra-magento-dev
+  engine_version: OpenSearch_2.11
+  instance_type: t3.small.search
+  instance_count: 1
+  volume_size: 20
 
-# Tags globales
+cloudwatch:
+  application_log_group_name: /aws/ec2/ibarra-magento/dev
+  retention_in_days: 14
+
+cicd:
+  enabled: false
+  name: cp-ibarra-magento-dev
+  artifact_bucket_name: ibarra-magento-dev-pipeline-artifacts
+  codestar_connection_arn: "REEMPLAZAR_CODESTAR_CONNECTION_ARN"
+  repository_id: "REEMPLAZAR_OWNER/REEMPLAZAR_REPO"
+  branch_name: develop
+
 tags:
-  Project: arrebyalejandro
-  Environment: prod
-  Owner: stoyco
+  Project: ibarra-magento
+  Environment: dev
+  Owner: grupo-ibarra
   ManagedBy: terragrunt
-  Service: wordpress
+  Service: magento

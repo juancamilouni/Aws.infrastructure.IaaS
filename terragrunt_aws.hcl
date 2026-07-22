@@ -11,7 +11,7 @@ remote_state {
   }
 
   config = {
-    bucket       = "arrebyalejandro-terraform-state"
+    bucket       = "ibarra-magento-terraform-state-${local.common_vars.environment}"
     key          = "${path_relative_to_include()}/terraform.tfstate"
     region       = local.common_vars.aws_region
     encrypt      = true
@@ -23,7 +23,7 @@ generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
 
-  contents = <<EOF
+  contents = <<EOF_PROVIDER
 provider "aws" {
   region = "${local.common_vars.aws_region}"
 
@@ -31,5 +31,5 @@ provider "aws" {
     tags = ${jsonencode(local.common_vars.tags)}
   }
 }
-EOF
+EOF_PROVIDER
 }
